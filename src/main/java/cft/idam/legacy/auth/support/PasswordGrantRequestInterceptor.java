@@ -11,8 +11,6 @@ import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 
 import java.util.regex.Pattern;
 
-import static java.util.Objects.isNull;
-
 /**
  * RequestInterceptor that uses spring security to retrieve a password grant, and then adds the
  * bearer token to the feign calls.

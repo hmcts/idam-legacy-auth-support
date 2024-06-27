@@ -26,13 +26,13 @@ class PasswordGrantRequestInterceptorTest {
     ClientRegistration clientRegistration;
 
     @Mock
-    OAuth2AuthorizedClientManager oAuth2AuthorizedClientManager;
+    OAuth2AuthorizedClientManager oauth2AuthorizedClientManager;
 
     @Mock
-    OAuth2AuthorizedClient oAuth2AuthorizedClient;
+    OAuth2AuthorizedClient oauth2AuthorizedClient;
 
     @Mock
-    OAuth2AccessToken oAuth2AccessToken;
+    OAuth2AccessToken oauth2AccessToken;
 
     @Mock
     RequestTemplate requestTemplate;
@@ -42,7 +42,7 @@ class PasswordGrantRequestInterceptorTest {
     @BeforeEach
     public void setup() {
         given(clientRegistration.getClientId()).willReturn("test-client");
-        underTest = new PasswordGrantRequestInterceptor(clientRegistration, oAuth2AuthorizedClientManager, "test-user",
+        underTest = new PasswordGrantRequestInterceptor(clientRegistration, oauth2AuthorizedClientManager, "test-user",
                 "test-pass", "/test-url");
     }
 
@@ -50,9 +50,9 @@ class PasswordGrantRequestInterceptorTest {
     void applySuccess() {
         given(requestTemplate.url()).willReturn("/test-url");
         given(clientRegistration.getRegistrationId()).willReturn("test-reg");
-        given(oAuth2AuthorizedClientManager.authorize(any())).willReturn(oAuth2AuthorizedClient);
-        given(oAuth2AuthorizedClient.getAccessToken()).willReturn(oAuth2AccessToken);
-        given(oAuth2AccessToken.getTokenValue()).willReturn("test-token");
+        given(oauth2AuthorizedClientManager.authorize(any())).willReturn(oauth2AuthorizedClient);
+        given(oauth2AuthorizedClient.getAccessToken()).willReturn(oauth2AccessToken);
+        given(oauth2AccessToken.getTokenValue()).willReturn("test-token");
         underTest.apply(requestTemplate);
         verify(requestTemplate).header(eq("Authorization"), eq("Bearer test-token"));
     }
@@ -62,7 +62,7 @@ class PasswordGrantRequestInterceptorTest {
         given(requestTemplate.url()).willReturn("/invalid-url");
         underTest.apply(requestTemplate);
         verify(clientRegistration, never()).getRegistrationId();
-        verify(oAuth2AuthorizedClientManager, never()).authorize(any());
+        verify(oauth2AuthorizedClientManager, never()).authorize(any());
     }
 
     @Test
@@ -70,14 +70,14 @@ class PasswordGrantRequestInterceptorTest {
         given(requestTemplate.url()).willReturn(null);
         underTest.apply(requestTemplate);
         verify(clientRegistration, never()).getRegistrationId();
-        verify(oAuth2AuthorizedClientManager, never()).authorize(any());
+        verify(oauth2AuthorizedClientManager, never()).authorize(any());
     }
 
     @Test
     void applyNullClient() {
         given(requestTemplate.url()).willReturn("/test-url");
         given(clientRegistration.getRegistrationId()).willReturn("test-reg");
-        given(oAuth2AuthorizedClientManager.authorize(any())).willReturn(null);
+        given(oauth2AuthorizedClientManager.authorize(any())).willReturn(null);
         try {
             underTest.apply(requestTemplate);
             fail();
