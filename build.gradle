@@ -31,7 +31,6 @@ pmd {
 
 ext {
 	springCloudVersion = "2023.0.1"
-	restAssuredVersion = "5.3.1"
 }
 
 dependencyManagement {
