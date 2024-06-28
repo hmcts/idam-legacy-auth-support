@@ -12,7 +12,7 @@ plugins {
 }
 
 group = 'com.github.hmcts.idam'
-version = '0.1.1-alpha'
+version = '0.1.2-alpha'
 
 java {
 	toolchain {
@@ -104,4 +104,11 @@ publishing {
 			version project.version
 		}
 	}
+}
+
+bootJar {
+	enabled = false
+}
+jar {
+	enabled = true
 }
