@@ -12,7 +12,7 @@ plugins {
 }
 
 group = 'com.github.hmcts.idam'
-version = '0.1.2-alpha'
+version = 'dev-snapshot'
 
 java {
 	toolchain {
@@ -111,4 +111,5 @@ bootJar {
 }
 jar {
 	enabled = true
+	archiveClassifier = ''
 }

@@ -1,3 +1,6 @@
+[![Release](https://jitpack.io/v/hmcts/idam-legacy-auth-support.svg)](https://jitpack.io/#hmcts/idam-legacy-auth-support)
+[![JitPack Badge](https://github.com/hmcts/idam-legacy-auth-support/actions/workflows/jitpack_build.yml/badge.svg)](https://github.com/hmcts/idam-legacy-auth-support/actions/workflows/jitpack_build.yml)
+
 # IdAM Legacy Auth Support
 A Java module to simplify IdAM password grant calls, and S2S lease calls.
 
