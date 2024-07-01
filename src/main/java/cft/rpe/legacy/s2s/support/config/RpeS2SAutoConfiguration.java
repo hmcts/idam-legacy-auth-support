@@ -22,7 +22,7 @@ import uk.gov.hmcts.reform.authorisation.generators.AutorefreshingJwtAuthTokenGe
  */
 @Slf4j
 @Configuration
-@ConditionalOnProperty(prefix = "idam.s2s-auth", name = "url")
+@ConditionalOnProperty(prefix = "idam.s2s-auth", name = "endpoint-regex")
 @EnableFeignClients(basePackageClasses = RpeS2STestingSupportApi.class)
 public class RpeS2SAutoConfiguration {
 
