@@ -41,7 +41,7 @@ dependencyManagement {
 		dependency group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.70'
 		dependency group: 'org.bouncycastle', name: 'bcpkix-jdk18on', version: '1.80'
 		// CVE-2018-10237 - Unbounded memory allocation
-		dependencySet(group: 'com.google.guava', version: '33.4.6-jre') {
+		dependencySet(group: 'com.google.guava', version: '33.4.7-android') {
 			entry 'guava'
 		}
 	}
