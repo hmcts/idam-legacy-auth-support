@@ -1,5 +1,4 @@
-[![Release](https://jitpack.io/v/hmcts/idam-legacy-auth-support.svg)](https://jitpack.io/#hmcts/idam-legacy-auth-support)
-[![JitPack Badge](https://github.com/hmcts/idam-legacy-auth-support/actions/workflows/jitpack_build.yml/badge.svg)](https://github.com/hmcts/idam-legacy-auth-support/actions/workflows/jitpack_build.yml)
+[![Azure Build Badge](https://github.com/hmcts/idam-legacy-auth-support/actions/workflows/ado_artifacts_build.yml/badge.svg)](https://github.com/hmcts/idam-legacy-auth-support/actions/workflows/ado_artifacts_build.yml)
 
 # IdAM Legacy Auth Support
 A Java module to simplify IdAM password grant calls, and S2S lease calls.
@@ -24,7 +23,7 @@ Once you have integrated with spring security you can user the standard annotati
 
 Note that the SIDAM team do not maintain S2S, but have included support for it here for simplicity.
 
-The library has auto configuration enabled based on spring properties, so all you need to do to start using it is import the library into 
+The library has auto configuration enabled based on spring properties, so all you need to do to start using it is import the library into
 your spring boot project and apply the correct configuration as described below.
 
 ### Spring Password Grants
@@ -59,7 +58,7 @@ spring:
               - roles
 ```
 
-Once that is done then any feign calls that you make that match the `endpoint-regex` will have an Authentication header with the 
+Once that is done then any feign calls that you make that match the `endpoint-regex` will have an Authentication header with the
 password grant bearer token. The fetching/caching of the token is handled by spring security.
 
 When the password grant support is active you will see a message similar to the following on application startup:
@@ -96,7 +95,7 @@ idam:
     testing-support:
       enabled: true
 ```
-This can be useful if you are developing before your microservice has been deployed to S2S. When running in testing-support mode 
+This can be useful if you are developing before your microservice has been deployed to S2S. When running in testing-support mode
 you will see a message similar to the following at startup:
 ```
 RpeS2SAutoConfiguration idam-legacy-auth-support: Configured s2sTestingSupportAuthTokenGenerator for service: my-service-s2s-id
