@@ -32,7 +32,7 @@ pmd {
 }
 
 ext {
-	springCloudVersion = "2025.0.0"
+	springCloudVersion = "2025.1.0"
 }
 
 dependencyManagement {
