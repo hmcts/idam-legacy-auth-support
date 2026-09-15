@@ -84,6 +84,12 @@ public class DefaultPasswordGrantAutoConfiguration {
 
     /**
      * Creates the HTTP client used for legacy password grants and token refresh.
+     *
+     * <p>Service API calls use Feign, but token requests use RestClient to match Spring Security 7's
+     * refresh-token client. Sharing this client lets both grant types use Spring's OAuth form and
+     * token-response converters and error handling. It also keeps token requests outside Feign's
+     * authorization interceptors, avoiding recursive attempts to obtain a token.
+     *
      * @return client configured for OAuth form requests, token responses and errors
      */
     @Bean
