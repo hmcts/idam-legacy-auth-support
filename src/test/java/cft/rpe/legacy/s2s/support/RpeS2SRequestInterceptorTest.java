@@ -26,7 +26,7 @@ class RpeS2SRequestInterceptorTest {
     private RpeS2SRequestInterceptor underTest;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         underTest = new RpeS2SRequestInterceptor(authTokenGenerator, "/test-url");
     }
 

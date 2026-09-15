@@ -1,20 +1,26 @@
 package cft.idam.legacy.auth.support.config;
 
+import cft.idam.legacy.auth.support.PasswordGrantAuthorizedClientProvider;
 import cft.idam.legacy.auth.support.PasswordGrantRequestInterceptor;
 import feign.RequestInterceptor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager;
-import org.springframework.security.oauth2.client.OAuth2AuthorizationContext;
 import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProviderBuilder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.endpoint.RestClientRefreshTokenTokenResponseClient;
+import org.springframework.security.oauth2.client.http.OAuth2ErrorResponseErrorHandler;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
+import org.springframework.security.oauth2.core.http.converter.OAuth2AccessTokenResponseHttpMessageConverter;
+import org.springframework.web.client.RestClient;
 
 import java.util.Collections;
 import java.util.Map;
@@ -43,50 +49,78 @@ public class DefaultPasswordGrantAutoConfiguration {
     private String passwordGrantEndpointRegex;
 
     /**
+     * Creates the configuration populated from the application properties.
+     */
+    @SuppressWarnings("PMD.UnnecessaryConstructor") // Documents the public constructor in the published Javadoc.
+    public DefaultPasswordGrantAutoConfiguration() {
+        // Spring injects configuration properties after construction.
+    }
+
+    /**
      * Default password grant feign request interceptor.
      *
      * @param oauth2AuthorizedClientService from spring
      * @param clientRegistrationRepository  from spring
+     * @param restClient HTTP client shared by password and refresh token requests
      * @return Password grant request interceptor.
      */
     @Bean
     public RequestInterceptor defaultPasswordGrantInterceptor(
             OAuth2AuthorizedClientService oauth2AuthorizedClientService,
-            ClientRegistrationRepository clientRegistrationRepository) {
+            ClientRegistrationRepository clientRegistrationRepository,
+            @Qualifier("legacyPasswordGrantRestClient") RestClient restClient) {
         log.info("idam-legacy-auth-support: Configured defaultPasswordGrantInterceptor "
                         + "for client reference: {}, endpoints: {}",
                 clientRegistrationReference, passwordGrantEndpointRegex);
         return new PasswordGrantRequestInterceptor(
                 clientRegistrationRepository.findByRegistrationId(clientRegistrationReference),
-                passwordGrantAuthorizedClientManager(oauth2AuthorizedClientService, clientRegistrationRepository),
+                passwordGrantAuthorizedClientManager(
+                        oauth2AuthorizedClientService, clientRegistrationRepository, restClient),
                 serviceAccountEmail,
                 serviceAccountPassword,
                 passwordGrantEndpointRegex
         );
     }
 
+    /**
+     * Creates the HTTP client used for legacy password grants and token refresh.
+     * @return client configured for OAuth form requests, token responses and errors
+     */
+    @Bean
+    @ConditionalOnMissingBean(name = "legacyPasswordGrantRestClient")
+    public RestClient legacyPasswordGrantRestClient() {
+        return RestClient.builder()
+                .configureMessageConverters(converters -> converters
+                        .addCustomConverter(new FormHttpMessageConverter())
+                        .addCustomConverter(new OAuth2AccessTokenResponseHttpMessageConverter()))
+                .defaultStatusHandler(new OAuth2ErrorResponseErrorHandler())
+                .build();
+    }
+
     private OAuth2AuthorizedClientManager passwordGrantAuthorizedClientManager(
             OAuth2AuthorizedClientService oauth2AuthorizedClientService,
-            ClientRegistrationRepository clientRegistrationRepository) {
+            ClientRegistrationRepository clientRegistrationRepository, RestClient restClient) {
         AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientManager =
                 new AuthorizedClientServiceOAuth2AuthorizedClientManager(clientRegistrationRepository,
                         oauth2AuthorizedClientService);
+        RestClientRefreshTokenTokenResponseClient refreshClient = new RestClientRefreshTokenTokenResponseClient();
+        refreshClient.setRestClient(restClient);
         authorizedClientManager
                 .setAuthorizedClientProvider(
                         OAuth2AuthorizedClientProviderBuilder.builder()
-                                .password()
-                                .refreshToken().build());
+                                .provider(new PasswordGrantAuthorizedClientProvider(restClient))
+                                .refreshToken(refresh -> refresh.accessTokenResponseClient(refreshClient)).build());
         authorizedClientManager.setContextAttributesMapper(systemUserCredentials());
         return authorizedClientManager;
     }
 
     private Function<OAuth2AuthorizeRequest, Map<String, Object>> systemUserCredentials() {
         return authorizeRequest -> {
-            String username = authorizeRequest.getAttribute(OAuth2ParameterNames.USERNAME);
-            String password = authorizeRequest.getAttribute(OAuth2ParameterNames.PASSWORD);
+            String username = authorizeRequest.getAttribute(PasswordGrantAuthorizedClientProvider.USERNAME);
+            String password = authorizeRequest.getAttribute(PasswordGrantAuthorizedClientProvider.PASSWORD);
             if (username != null && password != null) {
-                return Map.of(OAuth2AuthorizationContext.USERNAME_ATTRIBUTE_NAME, username,
-                        OAuth2AuthorizationContext.PASSWORD_ATTRIBUTE_NAME, password);
+                return Map.of(PasswordGrantAuthorizedClientProvider.USERNAME, username,
+                        PasswordGrantAuthorizedClientProvider.PASSWORD, password);
             }
             return Collections.emptyMap();
         };

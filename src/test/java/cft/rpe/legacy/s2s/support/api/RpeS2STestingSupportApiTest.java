@@ -26,7 +26,7 @@ class RpeS2STestingSupportApiTest {
         underTest.lease("test-service-name");
         verify(underTest).lease(mapArgumentCaptor.capture());
         Map<String, String> callMap = mapArgumentCaptor.getValue();
-        assertEquals(1, callMap.size());
-        assertEquals("test-service-name", callMap.get("microservice"));
+        assertEquals(1, callMap.size(), "The lease body should contain only the microservice");
+        assertEquals("test-service-name", callMap.get("microservice"), "The lease should use the requested service");
     }
 }

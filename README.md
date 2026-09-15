@@ -19,7 +19,7 @@ The library provides:
 
 The library is only required for making API calls to other services. It is not required for authentication of users with Hmcts-access.
 
-Once you have integrated with spring security you can user the standard annotations for RBAC. You will still need to use the S2S auth filter included in the rps-s2s library for S2S access control.
+Once you have integrated with spring security you can use the standard annotations for RBAC. You will still need to use the S2S auth filter included in the rps-s2s library for S2S access control.
 
 Note that the SIDAM team do not maintain S2S, but have included support for it here for simplicity.
 
@@ -105,6 +105,24 @@ RpeS2SAutoConfiguration idam-legacy-auth-support: Configured s2sTestingSupportAu
 
 This library is not intended to be used for fetching password grant calls in tests. The simplest way to make password grants calls
 in tests is to use SerenityRest.
+
+## Building and testing
+
+Use Java 21 and run `./gradlew clean build`. This compiles the library, runs the tests,
+Checkstyle and PMD, and assembles the main, source and Javadoc JARs.
+
+With Spring Boot 4 / Spring Security 7, this library supplies the legacy password-grant
+provider. Spring still manages authorized-client storage, token reuse and refresh.
+Existing `idam.legacy.password-grant` properties remain unchanged. Supported client
+authentication methods are `client_secret_post`, `client_secret_basic` and `none`.
+
+The regression tests exercise the configured Feign interceptor against mocked token
+responses, including credential encoding, registration selection, expiry, refresh and
+failure handling. They do not contact IdAM or S2S.
+
+CI runs the full build on pull requests and pushes to `master`. Configure the `build`
+status check as required in GitHub branch protection. Numeric release tags (`1.2.3`)
+are validated and built before publishing to the existing Azure Artifacts feed.
 
 ## License
 

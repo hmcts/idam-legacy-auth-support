@@ -12,7 +12,7 @@ public class RpeS2STestingSupportAuthTokenGenerator implements AuthTokenGenerato
     private final RpeS2STestingSupportApi rpeS2STestingSupportApi;
 
     /**
-     * Constructor.
+     * Creates a token generator backed by the S2S testing-support client.
      * @param serviceName S2S microservice name.
      * @param rpeS2STestingSupportApi S2S testing support feign client.
      */

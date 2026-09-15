@@ -21,7 +21,7 @@ public class ClientPrincipal implements Authentication {
     private final String clientId;
 
     /**
-     * Constructor.
+     * Creates a principal identified by the OAuth client ID.
      * @param clientId service client id.
      */
     public ClientPrincipal(String clientId) {

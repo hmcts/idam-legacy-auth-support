@@ -20,7 +20,7 @@ public class RpeS2SRequestInterceptor implements RequestInterceptor {
     private final Pattern matchesPattern;
 
     /**
-     * Constructor.
+     * Creates an interceptor that adds service authorization to matching requests.
      * @param authTokenGenerator S2S Auth Token Generator.
      * @param matchesRegex regex for urls that the bearer should be added to.
      */
