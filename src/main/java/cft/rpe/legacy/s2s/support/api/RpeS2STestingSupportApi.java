@@ -10,6 +10,7 @@ import java.util.Map;
 /**
  * Feign client for S2S testing support lease calls. For non-production environments only.
  */
+@FunctionalInterface
 @ConditionalOnProperty(value = "idam.s2s-auth.testing-support.enabled", havingValue = "true", matchIfMissing = false)
 @FeignClient(name = "rpetestingsupportapi", url = "${idam.s2s-auth.url}")
 public interface RpeS2STestingSupportApi {

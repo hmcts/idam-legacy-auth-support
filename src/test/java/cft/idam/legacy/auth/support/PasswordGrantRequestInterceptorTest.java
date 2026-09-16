@@ -12,7 +12,7 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
@@ -40,7 +40,7 @@ class PasswordGrantRequestInterceptorTest {
     private PasswordGrantRequestInterceptor underTest;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         given(clientRegistration.getClientId()).willReturn("test-client");
         underTest = new PasswordGrantRequestInterceptor(clientRegistration, oauth2AuthorizedClientManager, "test-user",
                 "test-pass", "/test-url");
@@ -78,12 +78,10 @@ class PasswordGrantRequestInterceptorTest {
         given(requestTemplate.url()).willReturn("/test-url");
         given(clientRegistration.getRegistrationId()).willReturn("test-reg");
         given(oauth2AuthorizedClientManager.authorize(any())).willReturn(null);
-        try {
-            underTest.apply(requestTemplate);
-            fail();
-        } catch (IllegalStateException ise) {
-            assertEquals("password grant flow on test-reg failed, client is null", ise.getMessage());
-        }
+        IllegalStateException exception = assertThrows(IllegalStateException.class,
+                () -> underTest.apply(requestTemplate), "A missing authorized client should fail the request");
+        assertEquals("password grant flow on test-reg failed, client is null", exception.getMessage(),
+                "The failure should identify the client registration");
     }
 
 }

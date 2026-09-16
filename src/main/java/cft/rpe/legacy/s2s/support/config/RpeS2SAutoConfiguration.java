@@ -26,6 +26,7 @@ import uk.gov.hmcts.reform.authorisation.generators.AutorefreshingJwtAuthTokenGe
 @EnableFeignClients(basePackageClasses = RpeS2STestingSupportApi.class)
 public class RpeS2SAutoConfiguration {
 
+
     @Value("${idam.s2s-auth.microservice}")
     private String s2sServiceName;
 
@@ -34,6 +35,14 @@ public class RpeS2SAutoConfiguration {
 
     @Value("${idam.s2s-auth.endpoint-regex}")
     private String s2sEndpointRegex;
+
+    /**
+     * Creates the configuration populated from the application properties.
+     */
+    @SuppressWarnings("PMD.UnnecessaryConstructor") // Documents the public constructor in the published Javadoc.
+    public RpeS2SAutoConfiguration() {
+        // Spring injects configuration properties after construction.
+    }
 
     /**
      * Configure primary real S2S generator.

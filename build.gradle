@@ -74,22 +74,30 @@ dependencyCheck {
 	suppressionFile = "$rootDir/config/owasp/suppressions.xml"
 }
 
+configurations {
+	mockitoAgent {
+		transitive = false
+	}
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
-	implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '6.1.0'
+	implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '6.0.1'
 	compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.40'
 	annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.40'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	mockitoAgent 'org.mockito:mockito-core'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+	jvmArgs "-javaagent:${configurations.mockitoAgent.asPath}"
 }
 
 java {
@@ -101,9 +109,9 @@ publishing {
 	publications {
 		Main(MavenPublication) {
 			from components.java
-			groupId project.group
-			artifactId 'idam-legacy-auth-support'
-			version project.version
+			groupId = project.group
+			artifactId = 'idam-legacy-auth-support'
+			version = project.version
 		}
 	}
 	repositories {

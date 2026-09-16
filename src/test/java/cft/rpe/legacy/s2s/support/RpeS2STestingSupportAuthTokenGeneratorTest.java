@@ -22,13 +22,13 @@ class RpeS2STestingSupportAuthTokenGeneratorTest {
     RpeS2STestingSupportAuthTokenGenerator underTest;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         ReflectionTestUtils.setField(underTest, "serviceName", "test-service-name");
     }
 
     @Test
     void generate() {
         given(rpeS2STestingSupportApi.lease("test-service-name")).willReturn("test-token");
-        assertEquals(underTest.generate(), "test-token");
+        assertEquals("test-token", underTest.generate(), "The generator should return the testing-support token");
     }
 }

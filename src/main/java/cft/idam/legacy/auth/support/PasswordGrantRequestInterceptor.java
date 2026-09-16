@@ -7,7 +7,6 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
-import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 
 import java.util.regex.Pattern;
 
@@ -34,7 +33,7 @@ public class PasswordGrantRequestInterceptor implements RequestInterceptor {
     private final Authentication principal;
 
     /**
-     * Constructor.
+     * Creates an interceptor that adds password-grant tokens to matching requests.
      * @param clientRegistration client registration from spring.
      * @param authorizedClientManager authorized client manager from spring.
      * @param resourceOwnerUsername service account username.
@@ -69,13 +68,14 @@ public class PasswordGrantRequestInterceptor implements RequestInterceptor {
     }
 
     private String getAccessToken() {
-        OAuth2AuthorizedClient client =
-            authorizedClientManager.authorize(OAuth2AuthorizeRequest.withClientRegistrationId(
-                clientRegistration.getRegistrationId())
-                                                  .principal(principal).attributes(attrs -> {
-                                                      attrs.put(OAuth2ParameterNames.USERNAME, resourceOwnerUsername);
-                                                      attrs.put(OAuth2ParameterNames.PASSWORD, resourceOwnerPassword);
-                                                  }).build());
+        OAuth2AuthorizeRequest request = OAuth2AuthorizeRequest
+                .withClientRegistrationId(clientRegistration.getRegistrationId())
+                .principal(principal)
+                .attributes(attributes -> {
+                    attributes.put(PasswordGrantAuthorizedClientProvider.USERNAME, resourceOwnerUsername);
+                    attributes.put(PasswordGrantAuthorizedClientProvider.PASSWORD, resourceOwnerPassword);
+                }).build();
+        OAuth2AuthorizedClient client = authorizedClientManager.authorize(request);
         if (client == null) {
             throw new IllegalStateException(
                 "password grant flow on " + clientRegistration.getRegistrationId() + " failed, client is null");
