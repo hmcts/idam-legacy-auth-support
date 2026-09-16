@@ -51,7 +51,6 @@ public final class PasswordGrantAuthorizedClientProvider implements OAuth2Author
     }
 
     @Override
-    @SuppressWarnings("PMD.LawOfDemeter") // The Spring context exposes the registration and cached token graph.
     public OAuth2AuthorizedClient authorize(OAuth2AuthorizationContext context) {
         ClientRegistration registration = context.getClientRegistration();
         if (!PASSWORD_GRANT.equals(registration.getAuthorizationGrantType())) {
