@@ -51,6 +51,7 @@ public final class PasswordGrantAuthorizedClientProvider implements OAuth2Author
     }
 
     @Override
+    @SuppressWarnings("PMD.LawOfDemeter") // Spring exposes authorization state through this context object graph.
     public OAuth2AuthorizedClient authorize(OAuth2AuthorizationContext context) {
         ClientRegistration registration = context.getClientRegistration();
         if (!PASSWORD_GRANT.equals(registration.getAuthorizationGrantType())) {
