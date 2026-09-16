@@ -49,11 +49,10 @@ public class DefaultPasswordGrantAutoConfiguration {
     private String passwordGrantEndpointRegex;
 
     /**
-     * Creates the configuration populated from the application properties.
+     * Creates the auto-configuration populated from the application's password-grant properties.
      */
-    @SuppressWarnings("PMD.UnnecessaryConstructor") // Documents the public constructor in the published Javadoc.
     public DefaultPasswordGrantAutoConfiguration() {
-        // Spring injects configuration properties after construction.
+        // Spring injects the configured values after construction.
     }
 
     /**
