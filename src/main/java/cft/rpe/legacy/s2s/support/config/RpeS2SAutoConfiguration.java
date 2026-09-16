@@ -39,7 +39,6 @@ public class RpeS2SAutoConfiguration {
     /**
      * Creates the configuration populated from the application properties.
      */
-    @SuppressWarnings("PMD.UnnecessaryConstructor") // Documents the public constructor in the published Javadoc.
     public RpeS2SAutoConfiguration() {
         // Spring injects configuration properties after construction.
     }
