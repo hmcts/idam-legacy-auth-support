@@ -27,7 +27,7 @@ checkstyle {
 }
 
 pmd {
-	toolVersion = '7.24.0'
+	toolVersion = '7.28.0'
 	consoleOutput = true
 	ruleSetFiles = files("$rootProject.projectDir/config/pmd/ruleset.xml")
 }
